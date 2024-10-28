@@ -30,7 +30,7 @@ add_library(ampl    src/asldate.c
                     src/fg_write.c 
                     src/fgh_read.c 
                     src/fpecatch.c 
-                    src/fpinit.c 
+                    $<IF:$<BOOL:WIN32>,src/fpinitmt.c,src/fpinit.c>
                     src/fullhes.c 
                     src/func_add.c 
                     src/funcadd1.c 
@@ -96,13 +96,17 @@ add_library(ampl    src/asldate.c
 target_include_directories(ampl PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
                                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/ampl>)
 
+set_target_properties(ampl PROPERTIES 
+                        POSITION_INDEPENDENT_CODE ON
+                        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 file(GLOB AMPL_HEADERS "src/*.h")
 
 install(TARGETS ampl
       EXPORT AMPLTargets
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${CMAKE_BUILD_TYPE}
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${CMAKE_BUILD_TYPE}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/${CMAKE_BUILD_TYPE})
 install(FILES ${AMPL_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ampl)
 install(EXPORT AMPLTargets
       FILE AMPLTargets.cmake
