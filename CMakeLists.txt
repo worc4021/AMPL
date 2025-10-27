@@ -91,18 +91,11 @@ set(AMPL_SOURCES
 	${asl_SOURCE_DIR}/xectim.c 
 	${asl_SOURCE_DIR}/xp2known.c)
 
-# if(WIN32)
-#       list(APPEND AMPL_SOURCES ${asl_SOURCE_DIR}/fpinitmt.c)
-# else()
-#       list(APPEND AMPL_SOURCES ${asl_SOURCE_DIR}/fpinit.c)
-# endif()
-
-
 add_library(ampl ${AMPL_SOURCES})
 
 file(GLOB ASL_HEADERS "${asl_SOURCE_DIR}/*.h")
 
-target_sources(ampl PRIVATE 
+target_sources(ampl PUBLIC 
 				FILE_SET HEADERS
 				BASE_DIRS ${asl_SOURCE_DIR}
 				FILES ${ASL_HEADERS})
@@ -111,13 +104,12 @@ set_target_properties(ampl PROPERTIES
                         POSITION_INDEPENDENT_CODE ON
                         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-file(GLOB AMPL_HEADERS "src/*.h")
-
 install(TARGETS ampl
       EXPORT AMPLTargets
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${CMAKE_BUILD_TYPE}
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${CMAKE_BUILD_TYPE}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/${CMAKE_BUILD_TYPE})
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/${CMAKE_BUILD_TYPE}
+	  FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ampl)
 install(FILES ${AMPL_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ampl)
 install(EXPORT AMPLTargets
       FILE AMPLTargets.cmake
