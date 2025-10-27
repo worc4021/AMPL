@@ -1,0 +1,76 @@
+
+file(READ ${asl_SOURCE_DIR}/details.c0 DETAILS_C0_CONTENTS)
+string(REPLACE "System_details" "${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}" DETAILS_C0_CONTENTS "${DETAILS_C0_CONTENTS}")
+file(WRITE ${asl_SOURCE_DIR}/details.c "${DETAILS_C0_CONTENTS}")
+
+include(CheckSourceRuns)
+block()
+	if(WIN32)
+		set(ADD_CLFAG -DNO_FPINIT)
+	else()
+		set(ADD_CLFAG -DASL_NO_FPINITMT)
+		set(ADD_SRC ${asl_SOURCE_DIR}/fpinit.c)
+		set(ADD_LIB m)
+	endif()
+	try_compile(
+		COMPILE_RES
+		${CMAKE_BINARY_DIR}
+		SOURCES ${asl_SOURCE_DIR}/arithchk.c ${ADD_SRC}
+		COMPILE_DEFINITIONS ${ADD_CLFAG} -DNO_LONG_LONG
+		LINK_LIBRARIES ${ADD_LIB}
+	)
+	if (COMPILE_RES)
+		try_run(
+			RUN_OUT COMPILE_OUT
+			${CMAKE_BINARY_DIR}
+			SOURCES ${asl_SOURCE_DIR}/arithchk.c ${ADD_SRC}
+			COMPILE_DEFINITIONS ${ADD_CLFAG} -DNO_LONG_LONG
+			LINK_LIBRARIES ${ADD_LIB}
+			RUN_OUTPUT_VARIABLE RUN_OUT
+		)
+	else()
+		try_compile(
+			COMPILE_RES
+			${CMAKE_BINARY_DIR}
+			SOURCES ${asl_SOURCE_DIR}/arithchk.c ${ADD_SRC}
+			COMPILE_DEFINITIONS ${ADD_CLFAG} -DNO_SSIZE_T
+			LINK_LIBRARIES ${ADD_LIB}
+		)
+		if (COMPILE_RES)
+			try_run(
+				RUN_OUT COMPILE_OUT
+				${CMAKE_BINARY_DIR}
+				SOURCES ${asl_SOURCE_DIR}/arithchk.c ${ADD_SRC}
+				COMPILE_DEFINITIONS ${ADD_CLFAG} -DNO_SSIZE_T
+				LINK_LIBRARIES ${ADD_LIB}
+				RUN_OUTPUT_VARIABLE RUN_OUT
+			)
+		else()
+			try_compile(
+				COMPILE_RES
+				${CMAKE_BINARY_DIR}
+				SOURCES ${asl_SOURCE_DIR}/arithchk.c ${ADD_SRC}
+				COMPILE_DEFINITIONS ${ADD_CLFAG} -DNO_SSIZE_T -DNO_LONG_LONG
+				LINK_LIBRARIES ${ADD_LIB}
+				OUTPUT_VARIABLE COMPILE_OUT
+			)
+			if (COMPILE_RES)
+				try_run(
+					RUN_OUT COMPILE_OUT
+					${CMAKE_BINARY_DIR}
+					SOURCES ${asl_SOURCE_DIR}/arithchk.c ${ADD_SRC}
+					COMPILE_DEFINITIONS ${ADD_CLFAG} -DNO_SSIZE_T -DNO_LONG_LONG
+					LINK_LIBRARIES ${ADD_LIB}
+					RUN_OUTPUT_VARIABLE RUN_OUT
+				)
+			else()
+				message(FATAL_ERROR "Cannot determine long long support")
+			endif()
+		endif()
+	endif()
+	file(GENERATE 
+		OUTPUT ${asl_SOURCE_DIR}/arith.h 
+		CONTENT ${RUN_OUT} 
+		NEWLINE_STYLE UNIX)
+	configure_file(${asl_SOURCE_DIR}/stdio1.h0 ${asl_SOURCE_DIR}/stdio1.h COPYONLY)
+endblock()

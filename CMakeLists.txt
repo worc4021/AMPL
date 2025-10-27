@@ -1,109 +1,111 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.25)
 project(AMPL)
 
 include(GNUInstallDirs)
+include(FetchContent)
 
-set(AMPL_SOURCES  src/asldate.c 
-                  src/atof.c 
-                  src/auxinfo.c 
-                  src/avltree.c 
-                  src/b_search.c 
-                  src/basename.c 
-                  src/bscanf.c 
-                  src/com2eval.c 
-                  src/comeval.c 
-                  src/con1ival.c 
-                  src/con2ival.c 
-                  src/con2val.c 
-                  src/conadj.c 
-                  src/conpval.c 
-                  src/conscale.c 
-                  src/conval.c 
-                  src/degree.c 
-                  src/derprop.c 
-                  src/details.c 
-                  src/dtoa1.c 
-                  src/duthes.c 
-                  src/dynlink.c 
-                  src/f_read.c 
-                  src/fg_read.c 
-                  src/fg_write.c 
-                  src/fgh_read.c 
-                  src/fpecatch.c 
-                  src/fullhes.c 
-                  src/func_add.c 
-                  src/funcadd1.c 
-                  src/g_fmt.c 
-                  src/genrowno.c 
-                  src/getenv.c 
-                  src/getstub.c 
-                  src/htcl.c 
-                  src/indic_cons.c 
-                  src/jac0dim.c 
-                  src/jac2dim.c 
-                  src/jacdim.c 
-                  src/jacinc.c 
-                  src/jacinc1.c 
-                  src/libnamsave.c 
-                  src/mach.c 
-                  src/mainexit.c 
-                  src/mip_pri.c 
-                  src/misc.c 
-                  src/mpec_adj.c 
-                  src/mqpcheckv.c 
-                  src/mypow.c 
-                  src/names.c 
-                  src/nl_obj.c 
-                  src/nqpcheck.c 
-                  src/nqpcheckZ.c 
-                  src/obj2val.c 
-                  src/obj_adj.c 
-                  src/obj_prec.c 
-                  src/objconst.c 
-                  src/objval.c 
-                  src/objval_.c 
-                  src/op_type.c 
-                  src/pfg_read.c 
-                  src/pfghread.c 
-                  src/printf.c 
-                  src/pshvprod.c 
-                  src/punknown.c 
-                  src/qp_read.c 
-                  src/qpcheck.c 
-                  src/qpcheckZ.c 
-                  src/qsortv.c 
-                  src/readsol.c 
-                  src/repwhere.c 
-                  src/rops.c 
-                  src/rops2.c 
-                  src/sigcatch.c 
-                  src/sos_add.c 
-                  src/sphes.c 
-                  src/sscanf.c 
-                  src/stderr.c 
-                  src/studchk0.c 
-                  src/suf_sos.c 
-                  src/value.c 
-                  src/writesol.c 
-                  src/wrtsol_.c 
-                  src/ws_desc.c 
-                  src/wsu_desc.c 
-                  src/x2check.c 
-                  src/xectim.c 
-                  src/xp1known.c 
-                  src/xp2known.c)
+FetchContent_Declare(
+      asl
+      URL https://www.netlib.org/ampl/solvers2.tgz
+)
+FetchContent_MakeAvailable(asl)
 
-if(WIN32)
-      list(APPEND AMPL_SOURCES src/fpinitmt.c)
-else()
-      list(APPEND AMPL_SOURCES src/fpinit.c)
-endif()
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+include(ConfigureSource)
+
+set(AMPL_SOURCES  
+	${asl_SOURCE_DIR}/asldate.c 
+	${asl_SOURCE_DIR}/atof.c 
+	${asl_SOURCE_DIR}/auxinfo.c 
+	${asl_SOURCE_DIR}/avltree.c 
+	${asl_SOURCE_DIR}/b_search.c 
+	${asl_SOURCE_DIR}/basename.c 
+	${asl_SOURCE_DIR}/bscanf.c 
+	${asl_SOURCE_DIR}/conscale.c 
+	${asl_SOURCE_DIR}/degree.c 
+	${asl_SOURCE_DIR}/derprop.c 
+	${asl_SOURCE_DIR}/details.c 
+	${asl_SOURCE_DIR}/dtoa1.c 
+	${asl_SOURCE_DIR}/duthes.c 
+	${asl_SOURCE_DIR}/dynlink.c 
+	${asl_SOURCE_DIR}/eval1.c 
+	${asl_SOURCE_DIR}/eval2.c 
+	${asl_SOURCE_DIR}/ewalloc1.c 
+	${asl_SOURCE_DIR}/ewalloc2.c 
+	${asl_SOURCE_DIR}/f_read.c 
+	${asl_SOURCE_DIR}/fg_read.c 
+	${asl_SOURCE_DIR}/fg_write.c 
+	${asl_SOURCE_DIR}/fpecatch.c 
+	${asl_SOURCE_DIR}/fpinit.c 
+	${asl_SOURCE_DIR}/fullhes.c 
+	${asl_SOURCE_DIR}/func_add.c 
+	${asl_SOURCE_DIR}/funcadd1.c 
+	${asl_SOURCE_DIR}/g_fmt.c 
+	${asl_SOURCE_DIR}/genrowno.c 
+	${asl_SOURCE_DIR}/getenv.c 
+	${asl_SOURCE_DIR}/getstub.c 
+	${asl_SOURCE_DIR}/htcl.c 
+	${asl_SOURCE_DIR}/indic_cons.c 
+	${asl_SOURCE_DIR}/jac0dim.c 
+	${asl_SOURCE_DIR}/jacdim.c 
+	${asl_SOURCE_DIR}/jacinc.c 
+	${asl_SOURCE_DIR}/jacinc1.c 
+	${asl_SOURCE_DIR}/libnamsave.c 
+	${asl_SOURCE_DIR}/mach.c 
+	${asl_SOURCE_DIR}/mainexit.c 
+	${asl_SOURCE_DIR}/mip_pri.c 
+	${asl_SOURCE_DIR}/misc.c 
+	${asl_SOURCE_DIR}/mpec_adj.c 
+	${asl_SOURCE_DIR}/mqpcheckv.c 
+	${asl_SOURCE_DIR}/mypow.c 
+	${asl_SOURCE_DIR}/names.c 
+	${asl_SOURCE_DIR}/nl_obj.c 
+	${asl_SOURCE_DIR}/nqpcheck.c 
+	${asl_SOURCE_DIR}/nqpcheckZ.c 
+	${asl_SOURCE_DIR}/obj_adj.c 
+	${asl_SOURCE_DIR}/obj_prec.c 
+	${asl_SOURCE_DIR}/objconst.c 
+	${asl_SOURCE_DIR}/objval_.c 
+	${asl_SOURCE_DIR}/op_type.c 
+	${asl_SOURCE_DIR}/pfghread.c 
+	${asl_SOURCE_DIR}/printf.c 
+	${asl_SOURCE_DIR}/pshvprod.c 
+	${asl_SOURCE_DIR}/punknown.c 
+	${asl_SOURCE_DIR}/qpcheck.c 
+	${asl_SOURCE_DIR}/qpcheckZ.c 
+	${asl_SOURCE_DIR}/qsortv.c 
+	${asl_SOURCE_DIR}/readsol.c 
+	${asl_SOURCE_DIR}/repwhere.c 
+	${asl_SOURCE_DIR}/sigcatch.c 
+	${asl_SOURCE_DIR}/sos_add.c 
+	${asl_SOURCE_DIR}/sphes.c 
+	${asl_SOURCE_DIR}/sscanf.c 
+	${asl_SOURCE_DIR}/stderr.c 
+	${asl_SOURCE_DIR}/studchk0.c 
+	${asl_SOURCE_DIR}/suf_sos.c 
+	${asl_SOURCE_DIR}/value.c 
+	${asl_SOURCE_DIR}/writesol.c 
+	${asl_SOURCE_DIR}/wrtsol_.c 
+	${asl_SOURCE_DIR}/ws_desc.c 
+	${asl_SOURCE_DIR}/wsu_desc.c 
+	${asl_SOURCE_DIR}/xectim.c 
+	${asl_SOURCE_DIR}/xp2known.c)
+
+# if(WIN32)
+#       list(APPEND AMPL_SOURCES ${asl_SOURCE_DIR}/fpinitmt.c)
+# else()
+#       list(APPEND AMPL_SOURCES ${asl_SOURCE_DIR}/fpinit.c)
+# endif()
 
 
 add_library(ampl ${AMPL_SOURCES})
 
-target_include_directories(ampl PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-                                        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/ampl>)
+file(GLOB ASL_HEADERS "${asl_SOURCE_DIR}/*.h")
+
+target_sources(ampl PRIVATE 
+				FILE_SET HEADERS
+				BASE_DIRS ${asl_SOURCE_DIR}
+				FILES ${ASL_HEADERS})
 
 set_target_properties(ampl PROPERTIES 
                         POSITION_INDEPENDENT_CODE ON
