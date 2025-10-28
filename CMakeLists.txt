@@ -93,6 +93,10 @@ set(AMPL_SOURCES
 
 add_library(ampl ${AMPL_SOURCES})
 
+if (WIN32)
+	target_compile_definitions(ampl PRIVATE _CRT_SECURE_NO_WARNINGS)
+endif()
+
 file(GLOB ASL_HEADERS "${asl_SOURCE_DIR}/*.h")
 
 target_sources(ampl PUBLIC 
